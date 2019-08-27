@@ -1,6 +1,8 @@
 class Model {
   constructor () {
     this.data = JSON.parse(localStorage.getItem('todos')) || []
+    // console.log('from model constructor')
+    // console.log(this.data)
   }
 }
 
@@ -10,7 +12,6 @@ class View {
     // Heading
     this.header = document.createElement('h1')
     this.header.textContent = 'Todos'
-
     // Form
     this.form = document.createElement('form')
     // Input box
@@ -30,8 +31,9 @@ class View {
     // Appending header and form
     this.app.append(this.header, this.form, this.ul)
   }
-  
+
   displayTodos (data) {
+    // console.log("initial")
     // To remove the previus input lists
     while (this.ul.firstChild) {
       this.ul.removeChild(this.ul.firstChild)
@@ -42,6 +44,8 @@ class View {
       this.para.textContent = 'Nothing is Added to todo'
       this.ul.append(this.para)
     } else {
+      // console.log('from view.displayTodos')
+      // console.log(data)
       data.forEach(todoData => {
         this.li = document.createElement('li')
         this.li.id = todoData.id
@@ -71,18 +75,22 @@ class View {
 
   addItem (data) {
     this.form.addEventListener('click', event => {
+      data = JSON.parse(localStorage.getItem('todos')) || []
       if (event.target.className === 'submit') {
         event.preventDefault()
         if (this.input.value) {
           const todoData = {
-            id: (data.length > 0) ? (data.length + 1) : 1,
+            id: (data.length > 0) ? data[data.length - 1].id + 1 : 1,
             text: this.input.value,
             complete: false
           }
           data.push(todoData)
         }
+        // console.log('from view.additem')
+        // console.log(data)
         this.displayTodos(data)
         localStorage.setItem('todos', JSON.stringify(data))
+        // console.log(data)
       }
       this.input.value = ''
     })
@@ -90,15 +98,15 @@ class View {
   }
 
   deleteItem (data) {
+  //  console.log("delete initial")
     this.ul.addEventListener('click', event => {
+      data = JSON.parse(localStorage.getItem('todos')) || []
       if (event.target.className === 'delete') {
         let parentId = parseInt(event.target.parentElement.id)
-        data = data.filter(items =>
-          // console.log(items.id)
-          // console.log(parentId)
-          items.id !== parentId
-        )
+        data = data.filter(items => items.id !== parentId)
       }
+      // console.log('from view.deleteItem')
+      // console.log(data)
       this.displayTodos(data)
       localStorage.setItem('todos', JSON.stringify(data))
     })
@@ -107,13 +115,14 @@ class View {
 
 class Controller {
   constructor (model, view) {
-    this.model = model
-    this.view = view
+    // this.model = model
+    // this.view = view
 
-    this.view.displayTodos(this.model.data)
-    this.view.addItem(this.model.data)
-    this.view.deleteItem(this.model.data)
-    
+    // console.log('from controller constructor')
+    // console.log(model.data)
+    view.displayTodos(model.data)
+    view.addItem(model.data)
+    view.deleteItem(model.data)
   }
 }
 
