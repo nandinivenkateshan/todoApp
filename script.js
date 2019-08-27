@@ -1,9 +1,6 @@
 class Model {
   constructor () {
-    this.data = [
-      { id: 1, text: 'first', complete: false },
-      { id: 2, text: 'second', complete: false }
-    ]
+    this.data = JSON.parse(localStorage.getItem('todos')) || []
   }
 }
 
@@ -25,6 +22,7 @@ class View {
     this.submitBtn = document.createElement('button')
     this.submitBtn.type = 'submit'
     this.submitBtn.textContent = 'Submit'
+    this.submitBtn.classList.add('submit')
     // list
     this.ul = document.createElement('ul')
     // Appending Input box and Submit button inside the form
@@ -32,7 +30,12 @@ class View {
     // Appending header and form
     this.app.append(this.header, this.form, this.ul)
   }
+  
   displayTodos (data) {
+    // To remove the previus input lists
+    while (this.ul.firstChild) {
+      this.ul.removeChild(this.ul.firstChild)
+    }
     // creating list
     if (data.length === 0) {
       this.para = document.createElement('p')
@@ -41,7 +44,7 @@ class View {
     } else {
       data.forEach(todoData => {
         this.li = document.createElement('li')
-        this.li.id = data.id
+        this.li.id = todoData.id
         // checkbox
         this.checkBox = document.createElement('input')
         this.checkBox.type = 'checkbox'
@@ -65,11 +68,39 @@ class View {
       })
     }
   }
-  deleteItem () {
-    console.log(this.li)
+
+  addItem (data) {
+    this.form.addEventListener('click', event => {
+      if (event.target.className === 'submit') {
+        event.preventDefault()
+        if (this.input.value) {
+          const todoData = {
+            id: (data.length > 0) ? (data.length + 1) : 1,
+            text: this.input.value,
+            complete: false
+          }
+          data.push(todoData)
+        }
+        this.displayTodos(data)
+        localStorage.setItem('todos', JSON.stringify(data))
+      }
+      this.input.value = ''
+    })
+    // this.displayTodos(data)
+  }
+
+  deleteItem (data) {
     this.ul.addEventListener('click', event => {
-      if (event.target.className === 'delete')
-        {alert("hi")}
+      if (event.target.className === 'delete') {
+        let parentId = parseInt(event.target.parentElement.id)
+        data = data.filter(items =>
+          // console.log(items.id)
+          // console.log(parentId)
+          items.id !== parentId
+        )
+      }
+      this.displayTodos(data)
+      localStorage.setItem('todos', JSON.stringify(data))
     })
   }
 }
@@ -80,7 +111,9 @@ class Controller {
     this.view = view
 
     this.view.displayTodos(this.model.data)
-    this.view.deleteItem()
+    this.view.addItem(this.model.data)
+    this.view.deleteItem(this.model.data)
+    
   }
 }
 
