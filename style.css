@@ -13,9 +13,7 @@ html {
   form {
     text-align: center;
   }
-  form input{
-    
-  }
+  
   ul p{
     text-align: center;
   }
@@ -28,12 +26,37 @@ html {
     font-size :20px;
     border-radius:10px;
     margin:0px 0px 10px 10px;
-  }
-  .textarea{
-    margin:30px 0px 0px 10px;
+  }￼￼￼￼
+ 
+  
+  .textBox{
+    height:50px;
     width:200px;
-    border: 1px solid grey;
+    border:2px solid black;
+    outline:none;
+    resize:none;
   }
-  .checkbox{
-    
+  .popdiv .popUp{
+    height: 100px;
+    width:300px;
+    border:1px solid black;
+    outline: none;
+    resize: none;
   }
+
+ul li .strike-through{
+text-decoration: line-through;
+pointer-events: none;
+opacity: 0.4;
+}
+.popdiv{
+  background-color:yellow ;
+  height:150px;
+  width:300px;
+}
+.cancelBtn{
+  margin:3px;
+}
+.saveBtn{
+  margin: 3px;
+}
