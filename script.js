@@ -1,10 +1,3 @@
-class Model {
-  constructor () {
-    this.data = JSON.parse(localStorage.getItem('todos')) || []
-    // console.log('from model constructor')
-    // console.log(this.data)
-  }
-}
 
 class View {
   constructor () {
@@ -95,6 +88,7 @@ class View {
   }
 
   addItem (data) {
+    console.log(data)
     this.form.addEventListener('click', event => {
       data = JSON.parse(localStorage.getItem('todos')) || []
       if (event.target.className === 'submit') {
@@ -103,7 +97,9 @@ class View {
           const todoData = {
             id: (data.length > 0) ? data[data.length - 1].id + 1 : 1,
             text: this.input.value,
-            complete: false
+            complete: false,
+            note: false,
+            noteText: 'FirstName'
           }
           data.push(todoData)
         }
@@ -141,7 +137,11 @@ class View {
         // console.log(typeof data[0].id)
         // console.log(typeof parentId)
 
-        data = data.map(todo => (parentId === todo.id) ? { id: todo.id, text: todo.text, complete: !todo.complete } : todo)
+        data = data.map(todo => (parentId === todo.id) ? { id: todo.id,
+          text: todo.text,
+          complete: !todo.complete,
+          note: todo.note,
+          noteText: todo.noteText } : todo)
         // console.log(data)
         this.displayTodos(data)
         localStorage.setItem('todos', JSON.stringify(data))
@@ -160,7 +160,11 @@ class View {
       data = JSON.parse(localStorage.getItem('todos')) || []
       if (this.textAreaInput) {
         let parentId = parseInt(event.target.parentElement.id)
-        data = data.map(todo => (parentId === todo.id) ? { id: todo.id, text: this.textAreaInput, complete: todo.complete } : todo)
+        data = data.map(todo => (parentId === todo.id) ? { id: todo.id,
+          text: this.textAreaInput,
+          complete: todo.complete,
+          note: todo.note,
+          noteText: todo.noteText } : todo)
         //  console.log(data)
         this.displayTodos(data)
         localStorage.setItem('todos', JSON.stringify(data))
@@ -172,46 +176,77 @@ class View {
   addNote (data) {
     this.noteBtn.addEventListener('click', event => {
       data = JSON.parse(localStorage.getItem('todos')) || []
-      if (event.target.className === 'noteBtn') {
-        this.div = document.createElement('div')
-        this.div.setAttribute('class', 'popdiv')
-        this.popUpBox = document.createElement('textarea')
-        this.popUpBox.classList.add('popUp')
-
-        this.saveBtn = document.createElement('button')
-        this.saveBtn.textContent = 'Save'
-        this.saveBtn.setAttribute('class', 'saveBtn')
-        this.cancelBtn = document.createElement('button')
-        this.cancelBtn.textContent = 'Cancel'
-        this.saveBtn.setAttribute('class', 'cancelBtn')
-        this.div.append(this.saveBtn, this.cancelBtn)
-
-        this.div.append(this.popUpBox)
-        this.app.append(this.div)
-        // let parentId = parseInt(event.target.parentElement.id)
-        // data = data.map(todo => (parentId === todo.id) ? { id: todo.id, text: todo.text, complete: todo.complete, note: !todo.note } : todo)
-        console.log(this.app)
-        // this.displayTodos(data)
-        // localStorage.setItem('todos', JSON.stringify(data))
+      let parentId = parseInt(event.target.parentElement.id)
+      // console.log(data)
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].id === parentId) data[i].note = true
+        else data[i].note = false
       }
+      // data = data.map(todo => (parentId === todo.id) ?  : todo)
+      // console.log(parentId)
+      let oldNotes = document.querySelector('.popdiv')
+      if (oldNotes) oldNotes.remove()
+      data.map(todo => {
+        if (todo.note) this.displayNote(todo.id, todo.noteText, data)
+      })
+      // localStorage.setItem('todos', JSON.stringify(data))
+      // this.saveNote(parentId)
+    })
+  }
+
+  displayNote (id, note, data) {
+    // console.log(data)
+    this.noteDiv = document.createElement('div')
+    this.noteDiv.setAttribute('class', 'popdiv')
+    this.popUpBox = document.createElement('textarea')
+    this.popUpBox.textContent = note
+    this.popUpBox.classList.add('popUp')
+
+    this.saveBtn = document.createElement('button')
+    this.saveBtn.textContent = 'Save'
+    this.saveBtn.setAttribute('class', 'saveBtn')
+    this.cancelBtn = document.createElement('button')
+    this.cancelBtn.textContent = 'Cancel'
+    this.cancelBtn.setAttribute('class', 'cancelBtn')
+    this.noteDiv.append(this.popUpBox, this.saveBtn, this.cancelBtn)
+    this.app.append(this.noteDiv)
+    this.saveNote(id, data)
+  }
+
+  saveNote (id, data) {
+    this.saveBtn.addEventListener('click', event => {
+      // console.log(this.popUpBox.value)
+      // data = JSON.parse(localStorage.getItem('todos')) || []
+      // console.log(data)
+      data = data.map(todo => (id === todo.id) ? { id: todo.id,
+        text: this.textAreaInput,
+        complete: todo.complete,
+        note: todo.note,
+        noteText: this.popUpBox.value } : todo)
+      localStorage.setItem('todos', JSON.stringify(data))
+      document.querySelector('.popdiv').style.display = 'none'
+      // console.log(data)
+      // if (this.popUpBox.value === '') alert('Enter Notes')
+      // else {
+      //   // console.log(event.target.parentElement.parentElement)
+      //   let parentId = parseInt(event.target.parentElement.id)
+      //   // console.log(parentId)
+      //   //  data = data.map(todo => (parentId === todo.id) ? { id: todo.id, text: this.textAreaInput, complete: todo.complete, note: '' } : todo)
+      // }
     })
   }
 }
 
 class Controller {
-  constructor (model, view) {
-    // this.model = model
-    // this.view = view
-
-    // console.log('from controller constructor')
-    // console.log(model.data)
-    view.displayTodos(model.data)
-    view.addItem(model.data)
-    view.textAreaClick(model.data)
-    view.checkBoxClick(model.data)
-    view.deleteItem(model.data)
-    // view.addNote(model.data)
+  constructor (view) {
+    let data = JSON.parse(localStorage.getItem('todos')) || []
+    view.displayTodos(data)
+    view.addItem()
+    view.textAreaClick()
+    view.checkBoxClick()
+    view.deleteItem()
+    view.addNote()
   }
 }
 
-const app = new Controller(new Model(), new View())
+const app = new Controller(new View())
