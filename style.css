@@ -1,62 +1,75 @@
-*{
-    box-sizing: border-box;
+* {
+  box-sizing: border-box;
 }
 html {
-    font-family: sans-serif;
-    color:rgb(0,0,0);
-  }
-  h1{
-    font-size: 50px;
-    text-align: center;
-    font-style: italic;
-  }
-  form {
-    text-align: center;
-  }
-  
-  ul p{
-    text-align: center;
-  }
-  ul li{
-    list-style-type:none;
-    text-align: center;
-  }
-  .noteBtn,.delete{
-    width:100px;
-    font-size :20px;
-    border-radius:10px;
-    margin:0px 0px 10px 10px;
-  }￼￼￼￼
- 
-  
-  .textBox{
-    height:50px;
-    width:200px;
-    border:2px solid black;
-    outline:none;
-    resize:none;
-  }
-  .popdiv .popUp{
-    height: 100px;
-    width:300px;
-    border:1px solid black;
-    outline: none;
-    resize: none;
-  }
+  font-family: sans-serif;
+  color: rgb(0, 0, 0);
+}
+/* .header-box{
+    
+  } */
+h1 {
+  font-size: 50px;
+  text-align: center;
+  font-style: italic;
+}
+form {
+  text-align: center;
+}
 
-ul li .strike-through{
-text-decoration: line-through;
-pointer-events: none;
-opacity: 0.4;
+ul p {
+  text-align: center;
 }
-.popdiv{
-  background-color:yellow ;
-  height:150px;
-  width:300px;
+ul li {
+  list-style-type: none;
+  text-align: center;
 }
-.cancelBtn{
-  margin:3px;
+.noteBtn,
+.delete {
+  width: 100px;
+  font-size: 20px;
+  border-radius: 10px;
+  margin: 0px 0px 10px 10px;
 }
-.saveBtn{
+.popdiv .popUp {
+  height: 100px;
+  width: 300px;
+  border: 1px solid black;
+  outline: none;
+  resize: none;
+}
+
+.textArea {
+  height: 50px;
+  width: 200px;
+  border: 2px solid black;
+  outline: none;
+  resize: none;
+}
+
+ul li .strike-through {
+  text-decoration: line-through;
+  pointer-events: none;
+  opacity: 0.4;
+}
+.popdiv {
+  background-color: yellow;
+  height: 150px;
+  width: 300px;
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  /* top: calc(50vh - 75px);
+  left: calc(50vw - 150px); */
+}
+
+.cancelBtn {
   margin: 3px;
+}
+.saveBtn {
+  margin: 3px;
+}
+.hide {
+  display: none;
 }
