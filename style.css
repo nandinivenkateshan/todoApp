@@ -5,21 +5,21 @@ html {
   font-family: sans-serif;
   color: rgb(0, 0, 0);
 }
-body{
- background-color:rgb(245, 240, 239);
+body {
+  background-color: rgb(245, 240, 239);
 }
-.header-box{
-    height:150px;
-    max-width:70%;
-    margin:40px auto;
-    background-color: rgba(238, 89, 126, 0.171);
-    box-shadow: 10px 10px 10px grey;
-  }
+.header-box {
+  height: 150px;
+  max-width: 70%;
+  margin: 40px auto;
+  background-color: rgba(238, 89, 126, 0.171);
+  box-shadow: 10px 10px 10px grey;
+}
 .heading {
   font-size: 50px;
   text-align: center;
-  padding-top:15px;
-  color:rgb(119, 48, 48);
+  padding-top: 15px;
+  color: rgb(119, 48, 48);
   text-shadow: 5px 5px 5px rgb(96, 108, 129);
 }
 form {
@@ -29,17 +29,26 @@ form {
 ul p {
   text-align: center;
 }
-ul li {
+.list {
   list-style-type: none;
   text-align: center;
+  background-color: grey;
+  margin: 40px auto;
+  padding: 10px;
+  max-width: 70%;
   display: flex;
 }
+
 .noteBtn,
-.delete,.due-date {
+.delete,
+.due-date,
+.priority {
   width: 100px;
   font-size: 20px;
   border-radius: 10px;
-  margin: 0px 0px 10px 10px;
+  margin: auto;
+  height: 30px;
+  font-size: 15px;
 }
 .popdiv .popUp {
   height: 100px;
@@ -48,12 +57,17 @@ ul li {
   outline: none;
   resize: none;
 }
-
-.textArea {
-  height: 40px;
+.mainTextBox {
+  height: 70px;
   width: 200px;
+  padding: 10px;
+  margin-left: 20px;
+  position: relative;
+}
+.textArea {
   outline: none;
   resize: none;
+  height: 40px;
 }
 
 ul li .strike-through {
@@ -73,7 +87,8 @@ ul li .strike-through {
   left: calc(50vw - 150px);
 }
 
-.cancelBtn {
+.cancelBtn,
+.close-btn {
   margin: 3px;
 }
 .saveBtn {
@@ -82,15 +97,18 @@ ul li .strike-through {
 .hide {
   display: none;
 }
-.due-date-box{
-  max-height:25px;
-  max-width:150px;
- 
-  padding:10px;
-  margin-top:10px;
-  padding:5px;
+.due-date-box {
+  max-height: 25px;
+  max-width: 130px;
+  padding: 10px;
+  margin-top: 10px;
+  padding: 5px;
+  left: 60px;
+  bottom: 0px;
+  position: absolute;
 }
-.date-div{
+
+.date-div {
   background-color: yellow;
   position: fixed;
   /* top: 50%;
@@ -98,4 +116,24 @@ ul li .strike-through {
   top: calc(50vh - 10px);
   left: calc(50vw - 150px);
 }
-
+.priority-box {
+  display: flex;
+  background-color: palegreen;
+  width: 300px;
+  padding: 20px;
+  position: fixed;
+  top: calc(50vh - 75px);
+  left: calc(50vw - 150px);
+}
+.radio-label {
+  margin: 0px 5px 0px 5px;
+}
+.list-low {
+  background-color:yellow;
+}
+.list-medium {
+  background-color: green;
+}
+.list-high{
+  background-color: red;
+}
