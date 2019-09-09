@@ -15,6 +15,7 @@ function createHeader () {
   elements.input.type = 'text'
   elements.input.placeholder = 'Enter the values'
   elements.input.name = 'inputValue'
+  elements.input.classList.add('input')
   // Submit Button
   elements.submitBtn = document.createElement('button')
   elements.submitBtn.type = 'submit'
@@ -99,9 +100,16 @@ function displayTodos (data, elements, id) {
       elements.priorityBtn.classList.add('priority')
       setPriority(elements)
 
-      if (todoData.lowPriority) elements.li.classList.add('list-low')
-      if (todoData.mediumPriority) elements.li.classList.add('list-medium')
-      if (todoData.highPriority) elements.li.classList.add('list-high')
+      elements.circle = document.createElement('div')
+      if (todoData.lowPriority) {
+        elements.circle.classList.add('yellow-circle')
+      }
+      if (todoData.mediumPriority) {
+        elements.circle.classList.add('green-circle')
+      }
+      if (todoData.highPriority) {
+        elements.circle.classList.add('red-circle')
+      }
 
       elements.li.append(
         elements.checkBox,
@@ -109,7 +117,8 @@ function displayTodos (data, elements, id) {
         elements.deleteBtn,
         elements.noteBtn,
         elements.dateBtn,
-        elements.priorityBtn
+        elements.priorityBtn,
+        elements.circle
       )
       elements.ul.append(elements.li)
       // console.log(data)
@@ -449,6 +458,10 @@ function displayPriority (id, data, elements) {
   elements.closeBtn.textContent = 'Close'
   elements.closeBtn.classList.add('close-btn')
 
+  elements.noneBtn = document.createElement('button')
+  elements.noneBtn.textContent = 'None'
+  elements.noneBtn.classList.add('none-btn')
+
   elements.priorityBox.append(
     elements.radioLow,
     elements.radioLowText,
@@ -456,17 +469,19 @@ function displayPriority (id, data, elements) {
     elements.radioMediumText,
     elements.radioHigh,
     elements.radioHighText,
+    elements.noneBtn,
     elements.closeBtn
   )
   elements.app.append(elements.priorityBox)
   lowPriority(id, data, elements)
   mediumPriority(id, data, elements)
   highPriority(id, data, elements)
+  none(id, data, elements)
   closePriority(elements)
 }
 
 function lowPriority (id, data, elements) {
-  elements.radioLow.addEventListener('click', event => {
+  elements.radioLow.addEventListener('change', event => {
     data = data.map(todo =>
       id === todo.id
         ? {
@@ -478,23 +493,20 @@ function lowPriority (id, data, elements) {
           date: todo.date,
           displayDate: todo.displayDate,
           priority: todo.priority,
-          lowPriority: !todo.lowPriority,
-          mediumPriority: todo.mediumPriority,
-          highPriority: todo.highPriority
+          lowPriority: true,
+          mediumPriority: false,
+          highPriority: false
         }
         : todo
     )
-    // idToSetColor =  data.map(todo => {
-    //     if (todo.lowPriority)
-    //   })
-    console.log(elements)
-    displayTodos(data, elements, id)
+    // let check = ['low', elements.radioLow.checked]
+    displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
 }
 
 function mediumPriority (id, data, elements) {
-  elements.radioMedium.addEventListener('click', event => {
+  elements.radioMedium.addEventListener('change', event => {
     data = data.map(todo =>
       id === todo.id
         ? {
@@ -506,19 +518,20 @@ function mediumPriority (id, data, elements) {
           date: todo.date,
           displayDate: todo.displayDate,
           priority: todo.priority,
-          lowPriority: todo.lowPriority,
-          mediumPriority: !todo.mediumPriority,
-          highPriority: todo.highPriority
+          lowPriority: false,
+          mediumPriority: true,
+          highPriority: false
         }
         : todo
     )
+    //   let check = ['medium', elements.radioMedium.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
 }
 
 function highPriority (id, data, elements) {
-  elements.radioHigh.addEventListener('click', event => {
+  elements.radioHigh.addEventListener('change', event => {
     data = data.map(todo =>
       id === todo.id
         ? {
@@ -530,12 +543,13 @@ function highPriority (id, data, elements) {
           date: todo.date,
           displayDate: todo.displayDate,
           priority: todo.priority,
-          lowPriority: todo.lowPriority,
-          mediumPriority: todo.mediumPriority,
-          highPriority: !todo.highPriority
+          lowPriority: false,
+          mediumPriority: false,
+          highPriority: true
         }
         : todo
     )
+    //  let check = ['high', elements.radioHigh.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
@@ -544,6 +558,30 @@ function highPriority (id, data, elements) {
 function closePriority (elements) {
   elements.closeBtn.addEventListener('click', event => {
     document.querySelector('.priority-box').style.display = 'none'
+  })
+}
+function none (id, data, elements) {
+  elements.noneBtn.addEventListener('click', event => {
+    data = data.map(todo =>
+      id === todo.id
+        ? {
+          id: todo.id,
+          text: todo.text,
+          complete: todo.complete,
+          note: todo.note,
+          noteText: todo.noteText,
+          date: todo.date,
+          displayDate: todo.displayDate,
+          priority: todo.priority,
+          lowPriority: false,
+          mediumPriority: false,
+          highPriority: false
+        }
+        : todo
+    )
+    //  let check = ['high', elements.radioHigh.checked]
+    displayTodos(data, elements)
+    localStorage.setItem('todos', JSON.stringify(data))
   })
 }
 
