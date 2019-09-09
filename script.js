@@ -40,6 +40,7 @@ function displayTodos (data, elements, id) {
   // creating list
   if (data.length === 0) {
     elements.para = document.createElement('p')
+    elements.para.classList.add('para')
     elements.para.textContent = 'Nothing is Added to todo'
     elements.ul.append(elements.para)
   } else {
