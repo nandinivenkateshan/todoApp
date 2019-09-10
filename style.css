@@ -78,8 +78,9 @@ form {
   padding: 10px;
   margin-left: 20px;
   position: relative;
-  color: rgb(180, 16, 71);
+  color:rgb(122, 59, 59);
   font-weight: bold;
+  
 }
 .textArea {
   outline: none;
@@ -122,21 +123,22 @@ font-weight:bold;
   display: none;
 }
 .due-date-box {
-  max-height: 25px;
-  max-width: 130px;
   padding: 10px;
   margin-top: 10px;
-  padding: 5px;
-  left: 60px;
-  bottom: 0px;
+  left: 30px;
+  bottom: -10px;
   position: absolute;
+  font-size: 15px;
+  color:white;
+  text-shadow: 3px 3px 5px rgb(131, 23, 59);
+
 }
 
 .date-div {
   background-color:rgb(85, 49, 49);
   position: fixed;
-  top: calc(32vh - 10px);
-  left: calc(50vw - 150px);
+  top: calc(35vh - 10px);
+  left: calc(59vw - 150px);
   padding:10px;
 }
 .priority-box {
@@ -194,4 +196,3 @@ font-weight:bold;
   background-color: rgb(99, 39, 5);
   margin: 18px;
 }
-

@@ -126,8 +126,8 @@ function addItem (elements) {
     if (event.target.className === 'submit') {
       event.preventDefault()
       let str = elements.input.value
-      if (/\s/.test(str) === true) alert('Please enter the values')
-      if (elements.input.value && /\s/.test(str) === false) {
+      if (/^\s/.test(str) === true) alert('Please enter the values')
+      if (elements.input.value && /^\s/.test(str) === false) {
         const todoData = {
           id: data.length > 0 ? data[data.length - 1].id + 1 : 1,
           text: elements.input.value,
@@ -198,37 +198,62 @@ function checkBoxClick (elements) {
 }
 
 function textAreaClick (elements) {
+  var value
   elements.ul.addEventListener('input', event => {
     if (event.target.className === 'textArea') {
+      value = event.target.textContent
       elements.textAreaInput = event.target.value
     }
   })
   elements.ul.addEventListener('focusout', event => {
-    let data = JSON.parse(localStorage.getItem('todos')) || []
-    if (elements.textAreaInput) {
-      console.log(event.target)
-      let parentId = parseInt(event.target.parentElement.parentElement.id)
-      console.log(parentId)
-      data = data.map(todo =>
-        parentId === todo.id
-          ? {
-            id: todo.id,
-            text: elements.textAreaInput,
-            complete: todo.complete,
-            note: todo.note,
-            noteText: todo.noteText,
-            date: todo.date,
-            displayDate: todo.displayDate,
-            priority: todo.priority,
-            lowPriority: todo.lowPriority,
-            mediumPriority: todo.mediumPriority,
-            highPriority: todo.highPriority
-          }
-          : todo
-      )
-      displayTodos(data, elements)
-      localStorage.setItem('todos', JSON.stringify(data))
-      elements.textAreaInput = ''
+    if (event.target.className === 'textArea') {
+      let data = JSON.parse(localStorage.getItem('todos')) || []
+      if (elements.textAreaInput) {
+        let parentId = parseInt(event.target.parentElement.parentElement.id)
+        data = data.map(todo =>
+          parentId === todo.id
+            ? {
+              id: todo.id,
+              text: elements.textAreaInput,
+              complete: todo.complete,
+              note: todo.note,
+              noteText: todo.noteText,
+              date: todo.date,
+              displayDate: todo.displayDate,
+              priority: todo.priority,
+              lowPriority: todo.lowPriority,
+              mediumPriority: todo.mediumPriority,
+              highPriority: todo.highPriority
+            }
+            : todo
+        )
+        displayTodos(data, elements)
+        localStorage.setItem('todos', JSON.stringify(data))
+        elements.textAreaInput = ''
+      } else {
+      // alert('jbcjh')
+        let parentId = parseInt(event.target.parentElement.parentElement.id)
+        data = data.map(todo =>
+          parentId === todo.id
+            ? {
+              id: todo.id,
+              text: value,
+              complete: todo.complete,
+              note: todo.note,
+              noteText: todo.noteText,
+              date: todo.date,
+              displayDate: todo.displayDate,
+              priority: todo.priority,
+              lowPriority: todo.lowPriority,
+              mediumPriority: todo.mediumPriority,
+              highPriority: todo.highPriority
+            }
+            : todo
+        )
+        displayTodos(data, elements)
+        localStorage.setItem('todos', JSON.stringify(data))
+        elements.textAreaInput = ''
+      }
     }
   })
 }
@@ -353,7 +378,7 @@ function displayDate (id, data, elements) {
       : '0' + (curDate.getMonth() + 1)
   const curDay =
     curDate.getDate() > 9 ? curDate.getDate() : '0' + curDate.getDate()
-  const dateStr = curDate.getFullYear() + '-' + curMonth + '-' + curDay
+  const dateStr = curDay + '-' + curMonth + '-' + curDate.getFullYear()
   elements.inputDate.setAttribute('min', dateStr)
 
   elements.saveBtn = document.createElement('button')
@@ -376,6 +401,7 @@ function displayDate (id, data, elements) {
 
 function saveDate (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
+    let val = elements.inputDate.value.toString().split('-').reverse().join('-')
     data = data.map(todo =>
       id === todo.id
         ? {
@@ -385,7 +411,7 @@ function saveDate (id, data, elements) {
           note: todo.note,
           noteText: todo.noteText,
           date: todo.date,
-          displayDate: elements.inputDate.value,
+          displayDate: val,
           priority: todo.priority,
           lowPriority: todo.lowPriority,
           mediumPriority: todo.mediumPriority,
