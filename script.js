@@ -266,11 +266,11 @@ function displayNote (id, note, data, elements) {
 
   elements.saveBtn = document.createElement('button')
   elements.saveBtn.textContent = 'Save'
-  elements.saveBtn.classList.add('saveBtn')
+  elements.saveBtn.classList.add('save-note')
 
   elements.cancelBtn = document.createElement('button')
   elements.cancelBtn.textContent = 'Cancel'
-  elements.cancelBtn.classList.add('cancelBtn')
+  elements.cancelBtn.classList.add('cancel-note')
   elements.noteDiv.append(
     elements.popUpBox,
     elements.saveBtn,
