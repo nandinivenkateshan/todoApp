@@ -32,7 +32,6 @@ function createHeader () {
 }
 
 function displayTodos (data, elements, id) {
-  // console.log('initial')
   // To remove the previus input lists
   while (elements.ul.firstChild) {
     elements.ul.removeChild(elements.ul.firstChild)
@@ -44,15 +43,10 @@ function displayTodos (data, elements, id) {
     elements.para.textContent = 'Nothing is Added to todo'
     elements.ul.append(elements.para)
   } else {
-    //  console.log('from view.displayTodos')
-    // console.log(data)
     data.forEach(todoData => {
       elements.li = document.createElement('li')
       elements.li.classList.add('list')
-      // console.log('display')
-      // console.log(typeof todoData.id)
       elements.li.id = todoData.id
-      //  console.log(elements.li.id)
 
       // checkbox
       elements.checkBox = document.createElement('input')
@@ -122,7 +116,6 @@ function displayTodos (data, elements, id) {
         elements.circle
       )
       elements.ul.append(elements.li)
-      // console.log(data)
     })
   }
 }
@@ -150,8 +143,6 @@ function addItem (elements) {
         }
         data.push(todoData)
       }
-      //  console.log('from view.additem')
-      //  console.log(data)
       displayTodos(data, elements)
       localStorage.setItem('todos', JSON.stringify(data))
     }
@@ -173,8 +164,6 @@ function deleteItem (elements) {
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     data = data.filter(items => items.id !== parentId)
-    //  console.log('from view.deleteItem')
-    //  console.log(data)
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
@@ -184,11 +173,7 @@ function checkBoxClick (elements) {
   elements.ul.addEventListener('click', event => {
     let data = JSON.parse(localStorage.getItem('todos')) || []
     if (event.target.type === 'checkbox') {
-      //   console.log(event.target.parentElement)
       let parentId = parseInt(event.target.parentElement.id)
-      // console.log(typeof data[0].id)
-      //  console.log(typeof parentId)
-
       data = data.map(todo =>
         parentId === todo.id
           ? {
@@ -206,7 +191,6 @@ function checkBoxClick (elements) {
           }
           : todo
       )
-      //  console.log(data)
       displayTodos(data, elements)
       localStorage.setItem('todos', JSON.stringify(data))
     }
@@ -217,13 +201,14 @@ function textAreaClick (elements) {
   elements.ul.addEventListener('input', event => {
     if (event.target.className === 'textArea') {
       elements.textAreaInput = event.target.value
-      // console.log(elements.textAreaInput)
     }
   })
   elements.ul.addEventListener('focusout', event => {
     let data = JSON.parse(localStorage.getItem('todos')) || []
     if (elements.textAreaInput) {
-      let parentId = parseInt(event.target.parentElement.id)
+      console.log(event.target)
+      let parentId = parseInt(event.target.parentElement.parentElement.id)
+      console.log(parentId)
       data = data.map(todo =>
         parentId === todo.id
           ? {
@@ -241,7 +226,6 @@ function textAreaClick (elements) {
           }
           : todo
       )
-      //  console.log(data)
       displayTodos(data, elements)
       localStorage.setItem('todos', JSON.stringify(data))
       elements.textAreaInput = ''
@@ -259,7 +243,7 @@ function addNote (elements) {
 
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
-    // console.log(data)
+
     for (let i = 0; i < data.length; i++) {
       if (data[i].id === parentId) data[i].note = true
       else data[i].note = false
@@ -269,12 +253,10 @@ function addNote (elements) {
     data.map(todo => {
       if (todo.note) displayNote(todo.id, todo.noteText, data, elements)
     })
-    //  console.log(data)
   })
 }
 
 function displayNote (id, note, data, elements) {
-  // console.log(data)
   elements.noteDiv = document.createElement('div')
   elements.noteDiv.classList.add('popdiv')
   elements.popUpBox = document.createElement('textarea')
@@ -300,8 +282,6 @@ function displayNote (id, note, data, elements) {
 
 function saveNote (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
-    //   console.log(elements.popUpBox.value)
-    //  console.log(data)
     data = data.map(todo =>
       id === todo.id
         ? {
@@ -529,7 +509,6 @@ function lowPriority (id, data, elements) {
         }
         : todo
     )
-    // let check = ['low', elements.radioLow.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
@@ -554,7 +533,6 @@ function mediumPriority (id, data, elements) {
         }
         : todo
     )
-    //   let check = ['medium', elements.radioMedium.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
@@ -579,7 +557,6 @@ function highPriority (id, data, elements) {
         }
         : todo
     )
-    //  let check = ['high', elements.radioHigh.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
@@ -609,7 +586,6 @@ function none (id, data, elements) {
         }
         : todo
     )
-    //  let check = ['high', elements.radioHigh.checked]
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
