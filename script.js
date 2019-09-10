@@ -161,6 +161,15 @@ function addItem (elements) {
 
 function deleteItem (elements) {
   elements.deleteBtn.addEventListener('click', event => {
+    let dates = document.querySelectorAll('.date-div')
+    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
+
+    let notes = document.querySelectorAll('.popdiv')
+    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
+
+    let priorityList = document.querySelectorAll('.priority-box')
+    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
+
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     data = data.filter(items => items.id !== parentId)
@@ -242,6 +251,12 @@ function textAreaClick (elements) {
 
 function addNote (elements) {
   elements.noteBtn.addEventListener('click', event => {
+    let dates = document.querySelectorAll('.date-div')
+    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
+
+    let priorityList = document.querySelectorAll('.priority-box')
+    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
+
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     // console.log(data)
@@ -323,6 +338,12 @@ function cancelNote (elements) {
 
 function addDate (elements) {
   elements.dateBtn.addEventListener('click', event => {
+    let notes = document.querySelectorAll('.popdiv')
+    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
+
+    let priorityList = document.querySelectorAll('.priority-box')
+    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
+
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     for (let i = 0; i < data.length; i++) {
@@ -412,6 +433,12 @@ function cancelDate (elements) {
 
 function setPriority (elements) {
   elements.priorityBtn.addEventListener('click', event => {
+    let notes = document.querySelectorAll('.popdiv')
+    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
+
+    let dates = document.querySelectorAll('.date-div')
+    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
+
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     for (let i = 0; i < data.length; i++) {
