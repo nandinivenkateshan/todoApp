@@ -132,7 +132,9 @@ function addItem (elements) {
     let data = JSON.parse(localStorage.getItem('todos')) || []
     if (event.target.className === 'submit') {
       event.preventDefault()
-      if (elements.input.value) {
+      let str = elements.input.value
+      if (/\s/.test(str) === true) alert('Please enter the values')
+      if (elements.input.value && /\s/.test(str) === false) {
         const todoData = {
           id: data.length > 0 ? data[data.length - 1].id + 1 : 1,
           text: elements.input.value,
