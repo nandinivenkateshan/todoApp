@@ -1,29 +1,22 @@
+function createElement (tag, className, type, textContent, name) {
+  const element = document.createElement(tag)
+  if (className) element.classList.add(className)
+  if (type) element.type = type
+  if (textContent) element.textContent = textContent
+  if (name) element.name = name
+  return element
+}
+
 function createHeader () {
   let elements = {}
   elements.app = document.querySelector('#root')
-  elements.headerBox = document.createElement('div')
-  elements.headerBox.classList.add('header-box')
-  // Heading
-  elements.header = document.createElement('h1')
-  elements.header.textContent = 'Todos'
-  elements.header.classList.add('heading')
-  // Form
-  elements.form = document.createElement('form')
-
-  // Input box
-  elements.input = document.createElement('input')
-  elements.input.type = 'text'
+  elements.headerBox = createElement('div', 'header-box')
+  elements.header = createElement('h1', 'heading', '', 'Todos')
+  elements.form = createElement('form')
+  elements.input = createElement('input', 'input', 'text', '', 'inputValue')
   elements.input.placeholder = 'Enter the values'
-  elements.input.name = 'inputValue'
-  elements.input.classList.add('input')
-  // Submit Button
-  elements.submitBtn = document.createElement('button')
-  elements.submitBtn.type = 'submit'
-  elements.submitBtn.textContent = 'Submit'
-  elements.submitBtn.classList.add('submit')
-
-  // list
-  elements.ul = document.createElement('ul')
+  elements.submitBtn = createElement('button', 'submit', 'submit', 'Submit')
+  elements.ul = createElement('ul')
   elements.form.append(elements.input, elements.submitBtn)
   elements.headerBox.append(elements.header, elements.form)
   elements.app.append(elements.headerBox, elements.ul)
@@ -38,83 +31,35 @@ function displayTodos (data, elements, id) {
   }
   // creating list
   if (data.length === 0) {
-    elements.para = document.createElement('p')
-    elements.para.classList.add('para')
-    elements.para.textContent = 'Nothing is Added to todo'
+    elements.para = createElement('p', 'para', '', 'Nothing is Added to todo')
     elements.ul.append(elements.para)
   } else {
     data.forEach(todoData => {
-      elements.li = document.createElement('li')
-      elements.li.classList.add('list')
+      elements.li = createElement('li', 'list')
       elements.li.id = todoData.id
-
-      // checkbox
-      elements.checkBox = document.createElement('input')
-      elements.checkBox.type = 'checkbox'
-      elements.checkBox.classList.add('checkbox')
+      elements.checkBox = createElement('input', 'checkbox', 'checkbox', '')
       elements.checkBox.checked = todoData.complete
-
-      // Displaying inputs
-      elements.textDiv = document.createElement('div')
-      elements.textDiv.classList.add('mainTextBox')
-      elements.textArea = document.createElement('textarea')
-      elements.textArea.textContent = todoData.text
-      elements.textArea.classList.add('textArea')
+      elements.textDiv = createElement('div', 'mainTextBox')
+      elements.textArea = createElement('textarea', 'textArea', '', todoData.text)
       elements.textDiv.append(elements.textArea)
-
-      // strike whenever checkbox cliked
       if (todoData.complete) {
         elements.textArea.classList.add('strike-through')
       }
-      // Date box
-      elements.dueDateBox = document.createElement('div')
-      elements.dueDateBox.textContent = todoData.displayDate
-      elements.dueDateBox.classList.add('due-date-box')
+      elements.dueDateBox = createElement('div', 'due-date-box', '', todoData.displayDate)
       elements.textDiv.append(elements.dueDateBox)
-
-      // Note button
-      elements.noteBtn = document.createElement('button')
-      elements.noteBtn.textContent = 'Note'
-      elements.noteBtn.classList.add('noteBtn')
+      elements.noteBtn = createElement('button', 'noteBtn', '', 'Note')
       addNote(elements)
-
-      // Delete buttton
-      elements.deleteBtn = document.createElement('button')
-      elements.deleteBtn.textContent = 'Delete'
-      elements.deleteBtn.classList.add('delete')
+      elements.deleteBtn = createElement('button', 'delete', '', 'Delete')
       deleteItem(elements)
-
-      // Due Dates
-      elements.dateBtn = document.createElement('button')
-      elements.dateBtn.textContent = 'Due-Date'
-      elements.dateBtn.classList.add('due-date')
+      elements.dateBtn = createElement('button', 'due-date', '', 'Due-Date')
       addDate(elements)
-
-      elements.priorityBtn = document.createElement('button')
-      elements.priorityBtn.textContent = 'Priority'
-      elements.priorityBtn.classList.add('priority')
+      elements.priorityBtn = createElement('button', 'priority', '', 'Priority')
       setPriority(elements)
-
-      elements.circle = document.createElement('div')
-      if (todoData.lowPriority) {
-        elements.circle.classList.add('yellow-circle')
-      }
-      if (todoData.mediumPriority) {
-        elements.circle.classList.add('green-circle')
-      }
-      if (todoData.highPriority) {
-        elements.circle.classList.add('red-circle')
-      }
-
-      elements.li.append(
-        elements.checkBox,
-        elements.textDiv,
-        elements.deleteBtn,
-        elements.noteBtn,
-        elements.dateBtn,
-        elements.priorityBtn,
-        elements.circle
-      )
+      elements.circle = createElement('div', '', '', '')
+      if (todoData.lowPriority) elements.circle.classList.add('yellow-circle')
+      if (todoData.mediumPriority) elements.circle.classList.add('green-circle')
+      if (todoData.highPriority) elements.circle.classList.add('red-circle')
+      elements.li.append(elements.checkBox, elements.textDiv, elements.deleteBtn, elements.noteBtn, elements.dateBtn, elements.priorityBtn, elements.circle)
       elements.ul.append(elements.li)
     })
   }
@@ -127,10 +72,10 @@ function addItem (elements) {
       event.preventDefault()
       let str = elements.input.value
       if (/^\s/.test(str) === true) alert('Please enter the values')
-      if (elements.input.value && /^\s/.test(str) === false) {
+      if (str && /^\s/.test(str) === false) {
         const todoData = {
           id: data.length > 0 ? data[data.length - 1].id + 1 : 1,
-          text: elements.input.value,
+          text: str,
           complete: false,
           note: false,
           noteText: '',
@@ -152,15 +97,9 @@ function addItem (elements) {
 
 function deleteItem (elements) {
   elements.deleteBtn.addEventListener('click', event => {
-    let dates = document.querySelectorAll('.date-div')
-    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
-
-    let notes = document.querySelectorAll('.popdiv')
-    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
-
-    let priorityList = document.querySelectorAll('.priority-box')
-    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
-
+    hideElements('.date-div')
+    hideElements('.popdiv')
+    hideElements('.priority-box')
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     data = data.filter(items => items.id !== parentId)
@@ -169,28 +108,23 @@ function deleteItem (elements) {
   })
 }
 
+function hideElements (className) {
+  let elementsList = document.querySelectorAll(className)
+  if (elementsList.length !== 0) elementsList.forEach(list => list.classList.add('hide'))
+}
+
 function checkBoxClick (elements) {
   elements.ul.addEventListener('click', event => {
     let data = JSON.parse(localStorage.getItem('todos')) || []
     if (event.target.type === 'checkbox') {
       let parentId = parseInt(event.target.parentElement.id)
-      data = data.map(todo =>
-        parentId === todo.id
-          ? {
-            id: todo.id,
-            text: todo.text,
-            complete: !todo.complete,
-            note: todo.note,
-            noteText: todo.noteText,
-            date: todo.date,
-            displayDate: todo.displayDate,
-            priority: todo.priority,
-            lowPriority: todo.lowPriority,
-            mediumPriority: todo.mediumPriority,
-            highPriority: todo.highPriority
-          }
-          : todo
-      )
+      data = data.map(todo => {
+        if (parentId === todo.id) {
+          todo.complete = !todo.complete
+          return todo
+        }
+        return todo
+      })
       displayTodos(data, elements)
       localStorage.setItem('todos', JSON.stringify(data))
     }
@@ -207,126 +141,70 @@ function textAreaClick (elements) {
   })
   elements.ul.addEventListener('focusout', event => {
     if (event.target.className === 'textArea') {
+      let parentId = parseInt(event.target.parentElement.parentElement.id)
       let data = JSON.parse(localStorage.getItem('todos')) || []
       if (elements.textAreaInput) {
-        let parentId = parseInt(event.target.parentElement.parentElement.id)
-        data = data.map(todo =>
-          parentId === todo.id
-            ? {
-              id: todo.id,
-              text: elements.textAreaInput,
-              complete: todo.complete,
-              note: todo.note,
-              noteText: todo.noteText,
-              date: todo.date,
-              displayDate: todo.displayDate,
-              priority: todo.priority,
-              lowPriority: todo.lowPriority,
-              mediumPriority: todo.mediumPriority,
-              highPriority: todo.highPriority
-            }
-            : todo
-        )
-        displayTodos(data, elements)
-        localStorage.setItem('todos', JSON.stringify(data))
-        elements.textAreaInput = ''
+        data = data.map(todo => {
+          if (parentId === todo.id) {
+            todo.text = elements.textAreaInput
+            return todo
+          }
+          return todo
+        })
       } else {
-      // alert('jbcjh')
-        let parentId = parseInt(event.target.parentElement.parentElement.id)
-        data = data.map(todo =>
-          parentId === todo.id
-            ? {
-              id: todo.id,
-              text: value,
-              complete: todo.complete,
-              note: todo.note,
-              noteText: todo.noteText,
-              date: todo.date,
-              displayDate: todo.displayDate,
-              priority: todo.priority,
-              lowPriority: todo.lowPriority,
-              mediumPriority: todo.mediumPriority,
-              highPriority: todo.highPriority
-            }
-            : todo
-        )
-        displayTodos(data, elements)
-        localStorage.setItem('todos', JSON.stringify(data))
-        elements.textAreaInput = ''
+        data = data.map(todo => {
+          if (parentId === todo.id) {
+            todo.text = value
+            return todo
+          }
+          return todo
+        })
       }
+      displayTodos(data, elements)
+      localStorage.setItem('todos', JSON.stringify(data))
+      elements.textAreaInput = ''
     }
   })
 }
 
 function addNote (elements) {
   elements.noteBtn.addEventListener('click', event => {
-    let dates = document.querySelectorAll('.date-div')
-    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
-
-    let priorityList = document.querySelectorAll('.priority-box')
-    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
+    hideElements('.date-div')
+    hideElements('.priority-box')
 
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
 
     for (let i = 0; i < data.length; i++) {
-      if (data[i].id === parentId) data[i].note = true
-      else data[i].note = false
+      data[i].note = (data[i].id === parentId) ? true : !true
     }
     let oldNotes = document.querySelector('.popdiv')
     if (oldNotes) oldNotes.remove()
-    data.map(todo => {
-      if (todo.note) displayNote(todo.id, todo.noteText, data, elements)
-    })
+    data.map(todo => { if (todo.note) displayNote(todo.id, todo.noteText, data, elements) })
   })
 }
 
 function displayNote (id, note, data, elements) {
-  elements.noteDiv = document.createElement('div')
-  elements.noteDiv.classList.add('popdiv')
-  elements.popUpBox = document.createElement('textarea')
-  elements.popUpBox.textContent = note
-  elements.popUpBox.classList.add('popUp')
-
-  elements.saveBtn = document.createElement('button')
-  elements.saveBtn.textContent = 'Save'
-  elements.saveBtn.classList.add('save-note')
-
-  elements.cancelBtn = document.createElement('button')
-  elements.cancelBtn.textContent = 'Cancel'
-  elements.cancelBtn.classList.add('cancel-note')
-  elements.noteDiv.append(
-    elements.popUpBox,
-    elements.saveBtn,
-    elements.cancelBtn
-  )
+  elements.noteDiv = createElement('div', 'popdiv')
+  elements.popUpBox = createElement('textarea', 'popUp', '', note)
+  elements.saveBtn = createElement('button', 'save-note', '', 'Save')
+  elements.cancelBtn = createElement('button', 'cancel-note', '', 'Cancel')
+  elements.noteDiv.append(elements.popUpBox, elements.saveBtn, elements.cancelBtn)
   elements.app.append(elements.noteDiv)
   saveNote(id, data, elements)
-  cancelNote(elements)
+  cancelBtn(elements.cancelBtn, '.popdiv')
 }
 
 function saveNote (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: elements.popUpBox.value,
-          date: todo.date,
-          displayDate: todo.displayDate,
-          priority: todo.priority,
-          lowPriority: todo.lowPriority,
-          mediumPriority: todo.mediumPriority,
-          highPriority: todo.highPriority
-        }
-        : todo
-    )
-    let notes = data.map(todo => {
-      if (id === todo.id) return todo.noteText
+    data = data.map(todo => {
+      if (id === todo.id) {
+        todo.noteText = elements.popUpBox.value
+        return todo
+      }
+      return todo
     })
+    let notes = data.map(todo => { if (id === todo.id) return todo.noteText })
     if (notes[0] === '') alert('You have not entered any notes')
     else {
       localStorage.setItem('todos', JSON.stringify(data))
@@ -335,93 +213,54 @@ function saveNote (id, data, elements) {
   })
 }
 
-function cancelNote (elements) {
-  elements.cancelBtn.addEventListener('click', event => {
-    document.querySelector('.popdiv').classList.add('hide')
-  })
+function cancelBtn (btnName, className) {
+  btnName.addEventListener('click', event => document.querySelector(className).classList.add('hide'))
 }
 
 function addDate (elements) {
   elements.dateBtn.addEventListener('click', event => {
-    let notes = document.querySelectorAll('.popdiv')
-    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
-
-    let priorityList = document.querySelectorAll('.priority-box')
-    if (priorityList.length !== 0) priorityList.forEach(list => list.classList.add('hide'))
+    hideElements('.popdiv')
+    hideElements('.priority-box')
 
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
+
     for (let i = 0; i < data.length; i++) {
-      if (data[i].id === parentId) data[i].date = true
-      else data[i].date = false
+      data[i].date = (data[i].id === parentId) ? true : !true
     }
     let oldDatesBox = document.querySelector('.date-div')
     if (oldDatesBox) oldDatesBox.remove()
-    data.map(todo => {
-      if (todo.date) displayDate(todo.id, data, elements)
-    })
+    data.map(todo => { if (todo.date) displayDate(todo.id, data, elements) })
   })
 }
+
 function displayDate (id, data, elements) {
-  elements.dateContainer = document.createElement('div')
-  elements.dateContainer.classList.add('date-div')
-
-  elements.inputDate = document.createElement('input')
-  elements.inputDate.type = 'date'
-  elements.inputDate.name = 'dueDate'
-  elements.inputDate.classList.add('input-date')
-
+  elements.dateContainer = createElement('div', 'date-div')
+  elements.inputDate = createElement('input', '', 'date')
   const curDate = new Date()
-  const curMonth =
-    curDate.getMonth() > 9
-      ? curDate.getMonth() + 1
-      : '0' + (curDate.getMonth() + 1)
-  const curDay =
-    curDate.getDate() > 9 ? curDate.getDate() : '0' + curDate.getDate()
+  const curMonth = curDate.getMonth() > 9 ? curDate.getMonth() + 1 : '0' + (curDate.getMonth() + 1)
+  const curDay = curDate.getDate() > 9 ? curDate.getDate() : '0' + curDate.getDate()
   const dateStr = curDay + '-' + curMonth + '-' + curDate.getFullYear()
   elements.inputDate.setAttribute('min', dateStr)
-
-  elements.saveBtn = document.createElement('button')
-  elements.saveBtn.textContent = 'Save'
-  elements.saveBtn.classList.add('saveBtn')
-
-  elements.cancelBtn = document.createElement('button')
-  elements.cancelBtn.textContent = 'Cancel'
-  elements.cancelBtn.classList.add('cancelBtn')
-
-  elements.dateContainer.append(
-    elements.inputDate,
-    elements.saveBtn,
-    elements.cancelBtn
-  )
+  elements.saveBtn = createElement('button', 'saveBtn', '', 'Save')
+  elements.cancelBtn = createElement('button', 'cancelBtn', '', 'Cancel')
+  elements.dateContainer.append(elements.inputDate, elements.saveBtn, elements.cancelBtn)
   elements.app.append(elements.dateContainer)
   saveDate(id, data, elements)
-  cancelDate(elements)
+  cancelBtn(elements.cancelBtn, '.date-div')
 }
 
 function saveDate (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
     let val = elements.inputDate.value.toString().split('-').reverse().join('-')
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: todo.noteText,
-          date: todo.date,
-          displayDate: val,
-          priority: todo.priority,
-          lowPriority: todo.lowPriority,
-          mediumPriority: todo.mediumPriority,
-          highPriority: todo.highPriority
-        }
-        : todo
-    )
-    let dates = data.map(todo => {
-      if (id === todo.id) return todo.displayDate
+    data = data.map(todo => {
+      if (id === todo.id) {
+        todo.displayDate = val
+        return todo
+      }
+      return todo
     })
+    let dates = data.map(todo => { if (id === todo.id) return todo.displayDate })
     if (dates[0] === '') alert('You have not set the Due-Date')
     else {
       displayTodos(data, elements)
@@ -431,187 +270,52 @@ function saveDate (id, data, elements) {
   })
 }
 
-function cancelDate (elements) {
-  elements.cancelBtn.addEventListener('click', event => {
-    document.querySelector('.date-div').classList.add('hide')
-  })
-}
-
 function setPriority (elements) {
   elements.priorityBtn.addEventListener('click', event => {
-    let notes = document.querySelectorAll('.popdiv')
-    if (notes.length !== 0) notes.forEach(list => list.classList.add('hide'))
-
-    let dates = document.querySelectorAll('.date-div')
-    if (dates.length !== 0) dates.forEach(list => list.classList.add('hide'))
+    hideElements('.popdiv')
+    hideElements('.date-div')
 
     let data = JSON.parse(localStorage.getItem('todos')) || []
     let parentId = parseInt(event.target.parentElement.id)
     for (let i = 0; i < data.length; i++) {
-      if (data[i].id === parentId) data[i].priority = true
-      else data[i].priority = false
+      data[i].priority = (data[i].id === parentId) ? true : !true
     }
     let oldPriorityBox = document.querySelector('.priority-box')
     if (oldPriorityBox) oldPriorityBox.remove()
-    data.map(todo => {
-      if (todo.priority) displayPriority(todo.id, data, elements)
-    })
+    data.map(todo => { if (todo.priority) displayPriority(todo.id, data, elements) })
   })
 }
 
 function displayPriority (id, data, elements) {
-  elements.priorityBox = document.createElement('div')
-  elements.priorityBox.classList.add('priority-box')
-
-  elements.radioLowText = document.createElement('label')
-  elements.radioLowText.textContent = 'Low'
-  elements.radioLowText.classList.add('radio-label')
-  elements.radioLow = document.createElement('input')
-  elements.radioLow.type = 'radio'
-  elements.radioLow.name = 'priority'
-  elements.radioLow.value = 'low'
-  elements.radioLow.classList.add('low-priority-btn')
-
-  elements.radioMediumText = document.createElement('label')
-  elements.radioMediumText.textContent = 'Medium'
-  elements.radioMediumText.classList.add('radio-label')
-  elements.radioMedium = document.createElement('input')
-  elements.radioMedium.type = 'radio'
-  elements.radioMedium.name = 'priority'
-  elements.radioMedium.value = 'medium'
-  elements.radioMedium.classList.add('medium--priority-btn')
-
-  elements.radioHighText = document.createElement('label')
-  elements.radioHighText.textContent = 'High'
-  elements.radioHighText.classList.add('radio-label')
-  elements.radioHigh = document.createElement('input')
-  elements.radioHigh.type = 'radio'
-  elements.radioHigh.name = 'priority'
-  elements.radioHigh.value = 'high'
-  elements.radioHigh.classList.add('high-priority-btn')
-
-  elements.closeBtn = document.createElement('button')
-  elements.closeBtn.textContent = 'Close'
-  elements.closeBtn.classList.add('close-btn')
-
-  elements.noneBtn = document.createElement('button')
-  elements.noneBtn.textContent = 'None'
-  elements.noneBtn.classList.add('none-btn')
-
-  elements.priorityBox.append(
-    elements.radioLow,
-    elements.radioLowText,
-    elements.radioMedium,
-    elements.radioMediumText,
-    elements.radioHigh,
-    elements.radioHighText,
-    elements.noneBtn,
-    elements.closeBtn
-  )
+  elements.priorityBox = createElement('div', 'priority-box')
+  elements.radioLowText = createElement('label', '', '', 'Low')
+  elements.radioLow = createElement('input', '', 'radio', '', 'priority')
+  elements.radioMediumText = createElement('label', '', '', 'Medium')
+  elements.radioMedium = createElement('input', '', 'radio', '', 'priority')
+  elements.radioHighText = createElement('label', '', '', 'High')
+  elements.radioHigh = createElement('input', '', 'radio', '', 'priority')
+  elements.closeBtn = createElement('button', 'close-btn', '', 'Close')
+  elements.noneBtn = createElement('button', 'none-btn', '', 'None')
+  elements.priorityBox.append(elements.radioLow, elements.radioLowText, elements.radioMedium, elements.radioMediumText, elements.radioHigh, elements.radioHighText, elements.noneBtn, elements.closeBtn)
   elements.app.append(elements.priorityBox)
-  lowPriority(id, data, elements)
-  mediumPriority(id, data, elements)
-  highPriority(id, data, elements)
-  none(id, data, elements)
-  closePriority(elements)
+  changePriority(id, data, elements, 'change', elements.radioLow, [true, false, false])
+  changePriority(id, data, elements, 'change', elements.radioMedium, [false, true, false])
+  changePriority(id, data, elements, 'change', elements.radioHigh, [false, false, true])
+  changePriority(id, data, elements, 'click', elements.noneBtn, [false, false, false])
+  cancelBtn(elements.closeBtn, '.priority-box')
 }
 
-function lowPriority (id, data, elements) {
-  elements.radioLow.addEventListener('change', event => {
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: todo.noteText,
-          date: todo.date,
-          displayDate: todo.displayDate,
-          priority: todo.priority,
-          lowPriority: true,
-          mediumPriority: false,
-          highPriority: false
-        }
-        : todo
-    )
-    displayTodos(data, elements)
-    localStorage.setItem('todos', JSON.stringify(data))
-  })
-}
-
-function mediumPriority (id, data, elements) {
-  elements.radioMedium.addEventListener('change', event => {
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: todo.noteText,
-          date: todo.date,
-          displayDate: todo.displayDate,
-          priority: todo.priority,
-          lowPriority: false,
-          mediumPriority: true,
-          highPriority: false
-        }
-        : todo
-    )
-    displayTodos(data, elements)
-    localStorage.setItem('todos', JSON.stringify(data))
-  })
-}
-
-function highPriority (id, data, elements) {
-  elements.radioHigh.addEventListener('change', event => {
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: todo.noteText,
-          date: todo.date,
-          displayDate: todo.displayDate,
-          priority: todo.priority,
-          lowPriority: false,
-          mediumPriority: false,
-          highPriority: true
-        }
-        : todo
-    )
-    displayTodos(data, elements)
-    localStorage.setItem('todos', JSON.stringify(data))
-  })
-}
-
-function closePriority (elements) {
-  elements.closeBtn.addEventListener('click', event => {
-    document.querySelector('.priority-box').style.display = 'none'
-  })
-}
-function none (id, data, elements) {
-  elements.noneBtn.addEventListener('click', event => {
-    data = data.map(todo =>
-      id === todo.id
-        ? {
-          id: todo.id,
-          text: todo.text,
-          complete: todo.complete,
-          note: todo.note,
-          noteText: todo.noteText,
-          date: todo.date,
-          displayDate: todo.displayDate,
-          priority: todo.priority,
-          lowPriority: false,
-          mediumPriority: false,
-          highPriority: false
-        }
-        : todo
-    )
+function changePriority (id, data, elements, eventName, btnName, arr) {
+  btnName.addEventListener(eventName, event => {
+    data = data.map(todo => {
+      if (id === todo.id) {
+        todo.lowPriority = arr[0]
+        todo.mediumPriority = arr[1]
+        todo.highPriority = arr[2]
+        return todo
+      }
+      return todo
+    })
     displayTodos(data, elements)
     localStorage.setItem('todos', JSON.stringify(data))
   })
