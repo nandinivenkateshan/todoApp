@@ -17,20 +17,17 @@ const getTodo = (req, res) => {
 
 const getTodoById = (req, res) => {
   const id = parseInt(req.params.id)
-  console.log(id)
   pool.query('SELECT * FROM todo WHERE id = $1', [id], (error, result) => {
-    console.log(result)
     if (error) throw error
     res.status(200).json(result.rows)
   })
 }
 
 const createTodoList = (req, res) => {
-  console.log(req.body)
   const { text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority } = req.body
-  pool.query('INSERT INTO todo (text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)', [text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority], (error, result) => {
+  pool.query('INSERT INTO todo (text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)', [ text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority ], (error, result) => {
     if (error) throw error
-    res.status(201).send('User added')
+    res.status(201).send('Added Items')
   })
 }
 
@@ -39,12 +36,29 @@ const updateTodoList = (req, res) => {
   const { text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority } = req.body
   pool.query('UPDATE todo SET text = $1, complete = $2, note = $3,noteText = $4,date=$5, displayDate=$6, priority=$7, lowPriority=$8, mediumPriority=$9, highPriority=$10 WHERE id = $11', [text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority], (error, result) => {
     if (error) throw error
-    res.status(200).sen(`User modified with id ${id}`)
+    res.status(200).send(`User modified with id ${id}`)
   })
 }
 
-const deleteTodoList = (req, res) => {
-  const id = parseInt(req.params.id)
+const checkBoxClick = (req, res) => {
+  const id = parseInt(req.body.parentId)
+  const complete = req.body.complete
+  pool.query('UPDATE todo SET complete = $1 WHERE id = $2', [complete, id], (error, result) => {
+    if (error) throw error
+    res.status(200).send(`User modified with id ${id}`)
+  })
+}
+const updateText = (req, res) => {
+  const id = parseInt(req.body.parentId)
+  const text = req.body.text
+  pool.query('UPDATE todo SET text = $1 WHERE id = $2', [text, id], (error, result) => {
+    if (error) throw error
+    res.status(200).send(`User modified text content with id ${id}`)
+  })
+}
+
+const deleteList = (req, res) => {
+  const id = parseInt(req.body.parentId)
   pool.query('DELETE FROM todo WHERE id =$1', [id], (error, result) => {
     if (error) throw error
     res.status(200).send(`User deleted with id ${id}`)
@@ -53,8 +67,10 @@ const deleteTodoList = (req, res) => {
 
 module.exports = {
   getTodo,
+  updateText,
   getTodoById,
   createTodoList,
   updateTodoList,
-  deleteTodoList
+  deleteList,
+  checkBoxClick
 }
