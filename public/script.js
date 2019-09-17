@@ -25,7 +25,9 @@ function createHeader () {
   return elements
 }
 
-function displayTodos (data, elements, id) {
+async function displayTodos (data, elements, id) {
+  // let data = await getData()
+  //  console.log('data from display', data)
   // To remove the previus input lists
   while (elements.ul.firstChild) {
     elements.ul.removeChild(elements.ul.firstChild)
@@ -37,6 +39,7 @@ function displayTodos (data, elements, id) {
   } else {
     data.forEach(todoData => {
       elements.li = createElement('li', 'list')
+      // console.log(todoData.id)
       elements.li.id = todoData.id
       elements.checkBox = createElement('input', 'checkbox', 'checkbox', '')
       elements.checkBox.checked = todoData.complete
@@ -46,34 +49,38 @@ function displayTodos (data, elements, id) {
       if (todoData.complete) {
         elements.textArea.classList.add('strike-through')
       }
-      elements.dueDateBox = createElement('div', 'due-date-box', '', todoData.displayDate)
+      elements.dueDateBox = createElement('div', 'due-date-box', '', todoData.displaydate)
       elements.textDiv.append(elements.dueDateBox)
       elements.noteBtn = createElement('button', 'noteBtn', '', 'Note')
-      addNote(elements, data)
+      addNote(elements)
       elements.deleteBtn = createElement('button', 'delete', '', 'Delete')
       deleteItem(elements, data)
       elements.dateBtn = createElement('button', 'due-date', '', 'Due-Date')
-      addDate(elements, data)
+      addDate(elements)
       elements.priorityBtn = createElement('button', 'priority', '', 'Priority')
       setPriority(elements, data)
       elements.circle = createElement('div', '', '', '')
-      if (todoData.lowPriority) elements.circle.classList.add('yellow-circle')
-      if (todoData.mediumPriority) elements.circle.classList.add('green-circle')
-      if (todoData.highPriority) elements.circle.classList.add('red-circle')
+      if (todoData.lowpriority) elements.circle.classList.add('yellow-circle')
+      if (todoData.mediumpriority) elements.circle.classList.add('green-circle')
+      if (todoData.highpriority) elements.circle.classList.add('red-circle')
       elements.li.append(elements.checkBox, elements.textDiv, elements.deleteBtn, elements.noteBtn, elements.dateBtn, elements.priorityBtn, elements.circle)
       elements.ul.append(elements.li)
     })
   }
 }
 
-function addItem (elements, data) {
-  elements.form.addEventListener('click', event => {
+async function addItem (elements) {
+  // console.log('data from additem', data)
+  elements.form.addEventListener('click', async event => {
     if (event.target.className === 'submit') {
+      let data = await getData()
+      // console.log('jvhjdh')
+      var todoData
       event.preventDefault()
       let str = elements.input.value
       if (/^\s/.test(str) === true) alert('Please enter the values')
       if (str && /^\s/.test(str) === false) {
-        const todoData = {
+        todoData = {
           id: data.length > 0 ? data[data.length - 1].id + 1 : 1,
           text: str,
           complete: false,
@@ -89,18 +96,41 @@ function addItem (elements, data) {
         data.push(todoData)
       }
       displayTodos(data, elements)
+      if (todoData) modifyTodo('http://localhost:2000/todos', todoData)
+      //   data = await getData()
+      // console.log(data)
+      elements.input.value = ''
     }
-    elements.input.value = ''
   })
 }
 
+async function modifyTodo (url, data) {
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  const val = await response
+  // console.log(val)
+  return val
+}
+
 function deleteItem (elements, data) {
-  elements.deleteBtn.addEventListener('click', event => {
+  // console.log(elements.deleteBtn)
+  // let data = await getData()
+  elements.deleteBtn.addEventListener('click', async event => {
     hideElements('.date-div')
     hideElements('.popdiv')
     hideElements('.priority-box')
+    // data = await getData()
+    // console.log(data)
     let parentId = parseInt(event.target.parentElement.id)
+    // console.log(event.target.parentElement)
     data = data.filter(items => items.id !== parentId)
+    // console.log(parentId)
+    modifyTodo('http://localhost:2000/todos/deleteList', { parentId })
     displayTodos(data, elements)
   })
 }
@@ -110,9 +140,10 @@ function hideElements (className) {
   if (elementsList.length !== 0) elementsList.forEach(list => list.classList.add('hide'))
 }
 
-function checkBoxClick (elements, data) {
-  elements.ul.addEventListener('click', event => {
+function checkBoxClick (elements) {
+  elements.ul.addEventListener('click', async event => {
     if (event.target.type === 'checkbox') {
+      let data = await getUrl()
       let parentId = parseInt(event.target.parentElement.id)
       data = data.map(todo => {
         if (parentId === todo.id) {
@@ -122,11 +153,12 @@ function checkBoxClick (elements, data) {
         return todo
       })
       displayTodos(data, elements)
+      modifyTodo('http://localhost:2000/todos/checkBox', { parentId, complete: event.target.checked })
     }
   })
 }
 
-function textAreaClick (elements, data) {
+function textAreaClick (elements) {
   var value
   elements.ul.addEventListener('input', event => {
     if (event.target.className === 'textArea') {
@@ -134,8 +166,9 @@ function textAreaClick (elements, data) {
       elements.textAreaInput = event.target.value
     }
   })
-  elements.ul.addEventListener('focusout', event => {
+  elements.ul.addEventListener('focusout', async event => {
     if (event.target.className === 'textArea') {
+      let data = await getUrl()
       let parentId = parseInt(event.target.parentElement.parentElement.id)
       if (elements.textAreaInput) {
         data = data.map(todo => {
@@ -145,6 +178,7 @@ function textAreaClick (elements, data) {
           }
           return todo
         })
+        modifyTodo('http://localhost:2000/todos/updateText', { parentId, text: elements.textAreaInput })
       } else {
         data = data.map(todo => {
           if (parentId === todo.id) {
@@ -153,6 +187,7 @@ function textAreaClick (elements, data) {
           }
           return todo
         })
+        modifyTodo('http://localhost:2000/todos/updateText', { parentId, text: value })
       }
       displayTodos(data, elements)
       elements.textAreaInput = ''
@@ -160,23 +195,29 @@ function textAreaClick (elements, data) {
   })
 }
 
-function addNote (elements, data) {
-  elements.noteBtn.addEventListener('click', event => {
+function addNote (elements) {
+  elements.noteBtn.addEventListener('click', async event => {
     hideElements('.date-div')
     hideElements('.priority-box')
-
     let parentId = parseInt(event.target.parentElement.id)
-
+    let data = await getUrl()
+    // console.log(data)
     for (let i = 0; i < data.length; i++) {
       data[i].note = (data[i].id === parentId) ? true : !true
     }
     let oldNotes = document.querySelector('.popdiv')
     if (oldNotes) oldNotes.remove()
-    data.map(todo => { if (todo.note) displayNote(todo.id, todo.noteText, data, elements) })
+    data.map(todo => {
+      if (todo.note) {
+        displayNote(todo.id, todo.notetext, data, elements)
+      }
+    }
+    )
   })
 }
 
 function displayNote (id, note, data, elements) {
+  // console.log(note)
   elements.noteDiv = createElement('div', 'popdiv')
   elements.popUpBox = createElement('textarea', 'popUp', '', note)
   elements.saveBtn = createElement('button', 'save-note', '', 'Save')
@@ -197,8 +238,11 @@ function saveNote (id, data, elements) {
       return todo
     })
     let notes = data.map(todo => { if (id === todo.id) return todo.noteText })
-    if (notes[0] === '') alert('You have not entered any notes')
-    else {
+    if (notes[0] === '') {
+      alert('You have not entered any notes')
+      modifyTodo('http://localhost:2000/todos/updateNote', { id, noteText: elements.popUpBox.value, note: true })
+    } else {
+      modifyTodo('http://localhost:2000/todos/updateNote', { id, noteText: elements.popUpBox.value, note: true })
       document.querySelector('.popdiv').classList.add('hide')
     }
   })
@@ -208,13 +252,13 @@ function cancelBtn (btnName, className) {
   btnName.addEventListener('click', event => document.querySelector(className).classList.add('hide'))
 }
 
-function addDate (elements, data) {
-  elements.dateBtn.addEventListener('click', event => {
+function addDate (elements) {
+  elements.dateBtn.addEventListener('click', async event => {
     hideElements('.popdiv')
     hideElements('.priority-box')
 
     let parentId = parseInt(event.target.parentElement.id)
-
+    let data = await getUrl()
     for (let i = 0; i < data.length; i++) {
       data[i].date = (data[i].id === parentId) ? true : !true
     }
@@ -243,28 +287,33 @@ function displayDate (id, data, elements) {
 function saveDate (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
     let val = elements.inputDate.value.toString().split('-').reverse().join('-')
+    // console.log(val)
     data = data.map(todo => {
       if (id === todo.id) {
-        todo.displayDate = val
+        todo.displaydate = val
         return todo
       }
       return todo
     })
     let dates = data.map(todo => { if (id === todo.id) return todo.displayDate })
-    if (dates[0] === '') alert('You have not set the Due-Date')
-    else {
+    if (dates[0] === '') {
+      alert('You have not set the Due-Date')
+      modifyTodo('http://localhost:2000/todos/updateDate', { id, date: true, displayDate: val })
+    } else {
       displayTodos(data, elements)
+      modifyTodo('http://localhost:2000/todos/updateDate', { id, date: true, displayDate: val })
       document.querySelector('.date-div').classList.add('hide')
     }
   })
 }
 
 function setPriority (elements, data) {
-  elements.priorityBtn.addEventListener('click', event => {
+  elements.priorityBtn.addEventListener('click', async event => {
     hideElements('.popdiv')
     hideElements('.date-div')
 
     let parentId = parseInt(event.target.parentElement.id)
+    let data = await getUrl()
     for (let i = 0; i < data.length; i++) {
       data[i].priority = (data[i].id === parentId) ? true : !true
     }
@@ -297,33 +346,40 @@ function changePriority (id, data, elements, eventName, btnName, arr) {
   btnName.addEventListener(eventName, event => {
     data = data.map(todo => {
       if (id === todo.id) {
-        todo.lowPriority = arr[0]
-        todo.mediumPriority = arr[1]
-        todo.highPriority = arr[2]
+        todo.lowpriority = arr[0]
+        todo.mediumpriority = arr[1]
+        todo.highpriority = arr[2]
         return todo
       }
       return todo
     })
+    console.log(data)
     displayTodos(data, elements)
+    modifyTodo('http://localhost:2000/todos/updatePriority', { id, priority: true, lowPriority: arr[0], mediumPriority: arr[1], highPriority: false })
   })
 }
 
 let getUrl = async () => {
-  let url = await fetch('http://localhost:3000/todos')
+  let url = await fetch('http://localhost:2000/todos')
+  // console.log(url)
   let data = await url.json()
   return data
 }
 
 async function main (app) {
-  let data = await getUrl()
+  let data = await getData()
   displayTodos(data, app)
-  addItem(app, data)
-  textAreaClick(app, data)
-  checkBoxClick(app, data)
-  deleteItem(app, data)
-  addNote(app, data)
-  addDate(app, data)
-  setPriority(app, data)
+  addItem(app)
+  textAreaClick(app)
+  checkBoxClick(app)
+  // addNote(app)
+  // addDate(app, data)
+  // setPriority(app, data)
+}
+
+async function getData () {
+  let data = await getUrl()
+  return data
 }
 
 const app = createHeader()
