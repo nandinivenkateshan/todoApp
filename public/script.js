@@ -68,9 +68,9 @@ async function displayTodos (data, elements, id) {
 async function addItem (elements) {
   elements.form.addEventListener('click', async event => {
     if (event.target.className === 'submit') {
+      event.preventDefault()
       let data = await getData()
       var todoData
-      event.preventDefault()
       let str = elements.input.value
       if (/^\s/.test(str) === true) alert('Please enter the values')
       if (str && /^\s/.test(str) === false) {
