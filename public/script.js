@@ -26,9 +26,6 @@ function createHeader () {
 }
 
 async function displayTodos (data, elements, id) {
-  // let data = await getData()
-  //  console.log('data from display', data)
-  // To remove the previus input lists
   while (elements.ul.firstChild) {
     elements.ul.removeChild(elements.ul.firstChild)
   }
@@ -39,7 +36,6 @@ async function displayTodos (data, elements, id) {
   } else {
     data.forEach(todoData => {
       elements.li = createElement('li', 'list')
-      // console.log(todoData.id)
       elements.li.id = todoData.id
       elements.checkBox = createElement('input', 'checkbox', 'checkbox', '')
       elements.checkBox.checked = todoData.complete
@@ -70,11 +66,9 @@ async function displayTodos (data, elements, id) {
 }
 
 async function addItem (elements) {
-  // console.log('data from additem', data)
   elements.form.addEventListener('click', async event => {
     if (event.target.className === 'submit') {
       let data = await getData()
-      // console.log('jvhjdh')
       var todoData
       event.preventDefault()
       let str = elements.input.value
@@ -97,8 +91,6 @@ async function addItem (elements) {
       }
       displayTodos(data, elements)
       if (todoData) modifyTodo('http://localhost:2000/todos', todoData)
-      //   data = await getData()
-      // console.log(data)
       elements.input.value = ''
     }
   })
@@ -113,23 +105,16 @@ async function modifyTodo (url, data) {
     }
   })
   const val = await response
-  // console.log(val)
   return val
 }
 
 function deleteItem (elements, data) {
-  // console.log(elements.deleteBtn)
-  // let data = await getData()
   elements.deleteBtn.addEventListener('click', async event => {
     hideElements('.date-div')
     hideElements('.popdiv')
     hideElements('.priority-box')
-    // data = await getData()
-    // console.log(data)
     let parentId = parseInt(event.target.parentElement.id)
-    // console.log(event.target.parentElement)
     data = data.filter(items => items.id !== parentId)
-    // console.log(parentId)
     modifyTodo('http://localhost:2000/todos/deleteList', { parentId })
     displayTodos(data, elements)
   })
@@ -201,7 +186,6 @@ function addNote (elements) {
     hideElements('.priority-box')
     let parentId = parseInt(event.target.parentElement.id)
     let data = await getUrl()
-    // console.log(data)
     for (let i = 0; i < data.length; i++) {
       data[i].note = (data[i].id === parentId) ? true : !true
     }
@@ -287,7 +271,6 @@ function displayDate (id, data, elements) {
 function saveDate (id, data, elements) {
   elements.saveBtn.addEventListener('click', event => {
     let val = elements.inputDate.value.toString().split('-').reverse().join('-')
-    // console.log(val)
     data = data.map(todo => {
       if (id === todo.id) {
         todo.displaydate = val
@@ -353,15 +336,13 @@ function changePriority (id, data, elements, eventName, btnName, arr) {
       }
       return todo
     })
-    console.log(data)
     displayTodos(data, elements)
-    modifyTodo('http://localhost:2000/todos/updatePriority', { id, priority: true, lowPriority: arr[0], mediumPriority: arr[1], highPriority: false })
+    modifyTodo('http://localhost:2000/todos/updatePriority', { id, priority: true, lowPriority: arr[0], mediumPriority: arr[1], highPriority: arr[2] })
   })
 }
 
 let getUrl = async () => {
   let url = await fetch('http://localhost:2000/todos')
-  // console.log(url)
   let data = await url.json()
   return data
 }
@@ -372,9 +353,6 @@ async function main (app) {
   addItem(app)
   textAreaClick(app)
   checkBoxClick(app)
-  // addNote(app)
-  // addDate(app, data)
-  // setPriority(app, data)
 }
 
 async function getData () {

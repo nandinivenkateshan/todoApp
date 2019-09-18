@@ -11,14 +11,9 @@ app.use(bodyParser.urlencoded({
   extended: true
 }))
 
-// app.get('/', (req, res) => {
-//   res.json({ info: 'Nandini Venkateshan' })
-// })
-
 app.get('/todos', db.getTodo)
 app.post('/todos/checkBox', db.checkBoxClick)
 app.post('/todos', db.createTodoList)
-app.post('/todos/update', db.updateTodoList)
 app.post('/todos/deleteList', db.deleteList)
 app.post('/todos/updateText', db.updateText)
 app.post('/todos/updateNote', db.updateNote)
