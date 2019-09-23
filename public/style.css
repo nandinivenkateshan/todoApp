@@ -41,6 +41,10 @@ form {
 }
 .para {
   text-align: center;
+  text-shadow:2px 2px 5px rgb(101, 69, 9);
+  color:rgb(185, 29, 34);
+  font-size: 20px;  
+  font-weight: bold;
 }
 .list {
   list-style-type: none;

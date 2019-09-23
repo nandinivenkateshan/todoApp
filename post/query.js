@@ -17,9 +17,10 @@ const getTodo = (req, res) => {
 
 const createTodoList = (req, res) => {
   const { text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority } = req.body
-  pool.query('INSERT INTO todo (text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)', [ text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority ], (error, result) => {
+  pool.query('INSERT INTO todo (text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id', [ text, complete, note, noteText, date, displayDate, priority, lowPriority, mediumPriority, highPriority ], (error, result) => {
+  // console.log(result.rows[0])
     if (error) throw error
-    res.status(201).send('Added Items')
+    res.status(201).send(result.rows)
   })
 }
 
